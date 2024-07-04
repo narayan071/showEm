@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, Link } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Redirect, router } from 'expo-router'
@@ -6,7 +6,12 @@ import { ScrollView } from 'react-native'
 import { images } from '../constants'
 import CustomButton from '../components/CustomButton'
 import { StatusBar } from 'expo-status-bar'
+import { useGlobalContext } from '../context/GlobalProvider'
 const index = () => {
+  const {isLoading, isLoggedIn} = useGlobalContext();
+  if(!isLoading && !isLoading){
+    return <Redirect href='/Home' />
+  }
   return (
     <>
       <SafeAreaView className="bg-primary h-full">
@@ -22,6 +27,8 @@ const index = () => {
               className="max-w--[380px] w-full h-[300px]"
               resizeMode="contain"
             />
+                      {/* <Link href='/home' className='text-white'>go to home</Link> */}
+
             <View className="relative mt-5">
               <Text className="text-3xl text-white font-bold text-center">Discover Endless Possibilites with <Text className="text-secondary-200">showEm!</Text></Text>
               <Image

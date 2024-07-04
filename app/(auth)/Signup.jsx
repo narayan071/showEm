@@ -1,11 +1,13 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView } from 'react-native'
 import {images} from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { createUser } from '../../lib/appwrite'
+
 const Signin = () => {
 
   const [form, setForm] = useState({
@@ -16,14 +18,29 @@ const Signin = () => {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const submit = ()=>{
-
-  }
+  const submit = async()=>{
+    if(!form.username || !form.email || !form.password){
+      Alert.alert('Error', 'Please fill in all the fields');
+    }
+      setIsSubmitting(true);
+      try {
+        const result = await createUser(form.email, form.password, form.username);
+        //set it to global state for the profile section maybe
+        router.replace('/Home');
+      } catch (error) {
+        Alert.alert('Error', error.message);
+      }
+      finally{
+        setIsSubmitting(false);
+      }
+      console.log("create user clicked")
+    }
+  
 
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary h-full flex-1">
       <ScrollView>
-        <View className="w-full justify-center min-h-[85vh] px-4  py-4 mt-7" >
+        <View className="w-full justify-center align-center min-h-[100vh]  px-4 py-4" >
           <Image
             source={images.logo}
             resizeMode='contain'
@@ -41,7 +58,7 @@ const Signin = () => {
           <FormField
             title="Email"
             value={form.email}
-            placeholder="enter registered email id"
+            placeholder="enter your email id"
             handleChangeText = {(e)=>setForm({...form, email: e})}
             keyboardType="email-address"
             otherStyles="mt-3"
