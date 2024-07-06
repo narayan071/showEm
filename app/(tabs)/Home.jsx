@@ -15,7 +15,7 @@ const Home = () => {
 
   const {data : posts, refetch} = useAppwrite(getAllPosts);
   const {data : latestPosts} = useAppwrite(getLatestPosts);
-  console.log(posts);
+  // console.log(posts);
   
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async() =>{
@@ -60,7 +60,7 @@ const Home = () => {
               
               <View className="w-full flex-1 pt-5 pb-8">
                 <Text className="font-pregular text-lg text-gray-100 mb-3">Latest Videos</Text>
-                <Trending posts = {posts}/>
+                <Trending posts = {latestPosts}/>
               </View>
             </View>
           )}
