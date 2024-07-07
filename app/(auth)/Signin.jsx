@@ -6,15 +6,15 @@ import {images} from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
 import { Link, router } from 'expo-router'
-import { signIn } from '../../lib/appwrite'
+import { getCurrentUser, signIn } from '../../lib/appwrite'
+import {useGlobalContext} from '../../context/GlobalProvider'
 
 const Signin = () => {
-
+  const {setUser, setIsLoggedIn} = useGlobalContext()
   const [form, setForm] = useState({
     email : "",
     password : "",
   })
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submit = async()=>{
     if(!form.email || !form.password){
@@ -22,7 +22,11 @@ const Signin = () => {
     }
       setIsSubmitting(true);
       try {
-        signIn(form.email, form.password);
+        await signIn(form.email, form.password);
+        const result = await getCurrentUser();
+        setUser(result);
+        setIsLoggedIn(true);
+
         //set it to global state for the profile section maybe
         router.replace('/Home');
       } catch (error) {

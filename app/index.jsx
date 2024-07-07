@@ -9,7 +9,8 @@ import { StatusBar } from 'expo-status-bar'
 import { useGlobalContext } from '../context/GlobalProvider'
 const index = () => {
   const {isLoading, isLoggedIn} = useGlobalContext();
-  if(!isLoading && !isLoading){
+  if(!isLoading && isLoggedIn){
+    // console.log("is loggen in?: ", isLoggedIn);
     return <Redirect href='/Home' />
   }
   return (
