@@ -32,7 +32,7 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avat
             
             {play ? (
                 <Video
-                    source={{ uri: 'https://www.w3schools.com/html/mov_bbb.mp4' }} // Replace with a direct video link
+                    source={{ uri: video }} 
                     className="w-full h-60 rounded-xl mt-3"
                     resizeMode={ResizeMode.CONTAIN}
                     useNativeControls
