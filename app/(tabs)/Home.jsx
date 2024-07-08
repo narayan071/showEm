@@ -51,7 +51,7 @@ const Home = () => {
                 </View>
                 <Image
                   resizeMode='contain'
-                  className="w-9 h-10"
+                  className="w-10 h-11"
                   source={images.logoSmall}
                 />
               </View>

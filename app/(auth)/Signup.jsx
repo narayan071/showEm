@@ -47,7 +47,7 @@ const Signin = () => {
           <Image
             source={images.logo}
             resizeMode='contain'
-            className="w-[115px] h-[35px]"
+            className="w-[130px] h-[100px]"
           />
           <Text className="font-psemibold text-2xl text-white mt-5">Sign up for showEm</Text>
           <FormField
