@@ -39,11 +39,7 @@ const Create = () => {
         setForm({...form, video : result.assets[0]})
       }
     }
-    // else{
-    //   setTimeout(() => {
-    //     Alert.alert('Document picked', JSON.stringify(result, null, 2))
-    //   }, 100);
-    // }
+ 
   }
 
   const submit = async ()=>{
@@ -79,7 +75,7 @@ const Create = () => {
         <FormField
           title="Video Title"
           value={form.title}
-          placeholder={"give your vide a catchy title"}
+          placeholder={"give your video a catchy title"}
           handleChangeText={(e) => setForm({...form, title : e})}
           otherStyles="mt-10"
         />
@@ -129,9 +125,9 @@ const Create = () => {
           </TouchableOpacity>
         </View>
         <FormField
-          title="AI Prompt"
+          title="Description"
           value={form.prompt}
-          placeholder={"the prompt used to create the video"}
+          placeholder={"fill in a suiting description"}
           handleChangeText={(e) => setForm({...form, prompt : e})}
           otherStyles="mt-7"
         />

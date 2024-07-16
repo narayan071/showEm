@@ -29,7 +29,7 @@ const Profile = () => {
           <VideoCard video={item} />
         )}
         ListHeaderComponent={() => (
-          <View className="w-full px-4">
+          <View className="w-full px-4 mb-7">
             <View className="flex-row justify-between items-center mb-12">
               <Image
                 source={images.logoSmall}

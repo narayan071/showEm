@@ -1,14 +1,19 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { icons } from '../constants';
 import { ResizeMode, Video } from 'expo-av';
 import { useGlobalContext } from '../context/GlobalProvider';
-import { updateDocument, getCurrentUser } from '../lib/appwrite';
+import { updateDocument, getCurrentUser, deleteDocument } from '../lib/appwrite';
 
-const VideoCard = ({ video: { $id: videoId, title, thumbnail, video, prompt, creator: { username, avatar } } }) => {
+const VideoCard = ({ video }) => {
     const { user, setUser } = useGlobalContext();
     const [play, setPlay] = useState(false);
     const [bookmark, setBookmark] = useState(false);
+    if (!video || !video.$id || !video.creator) {
+        return null; 
+    }
+
+    const { $id: videoId, title, thumbnail, video: videoUrl, prompt, creator: { username, avatar, $id: creatorId } } = video;
 
     useEffect(() => {
         const isBookmarked = user?.bookmarks?.some(bookmark => bookmark.$id === videoId);
@@ -26,18 +31,45 @@ const VideoCard = ({ video: { $id: videoId, title, thumbnail, video, prompt, cre
         };
 
         try {
+            console.log("bookmark clicked")
             await updateDocument(user.$id, updateData);
             const updatedUser = await getCurrentUser();
-            setUser(updatedUser); 
-            setBookmark(!isBookmarked); 
+            setUser(updatedUser);
+            setBookmark(!isBookmarked);
+            console.log("finish here")
         } catch (error) {
             console.error('Error updating bookmarks:', error);
         }
     };
 
+    const handleDelete = async () => {
+        Alert.alert(
+            "Delete Video",
+            "Are you sure you want to delete this video?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        try {
+                            await deleteDocument(videoId);
+                            console.log('Video deleted successfully');
+                        } catch (error) {
+                            console.error('Error deleting video:', error);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
     return (
         <View className="flex-col items-center px-4 mb-4 pt-4 border border-gray-400 rounded-lg">
-            <View className="flex-row gap-3 items-start ">
+            <View className="flex-row gap-3 items-start">
                 <View className="justify-center items-center flex-row flex-1">
                     <View className="w-[46px] h-[46px] rounded-lg border border-secondary-200 justify-center items-center p-0.5">
                         <Image
@@ -51,17 +83,22 @@ const VideoCard = ({ video: { $id: videoId, title, thumbnail, video, prompt, cre
                         <Text className="text-gray-100 text-sm" numberOfLines={1}>{username}</Text>
                     </View>
                 </View>
-                <View className="pt-2">
-                    <Image source={icons.menu}
-                        className="w-5 h-5"
-                        resizeMode='contain'
-                    />
-                </View>
+                {user.$id === creatorId && (
+                    <View className="pt-2">
+                        <TouchableOpacity onPress={handleDelete}>
+                            <Image
+                                source={icons.trash}
+                                className="w-5 h-5"
+                                resizeMode='contain'
+                            />
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
             
             {play ? (
                 <Video
-                    source={{ uri: video }} 
+                    source={{ uri: videoUrl }} 
                     className="w-full h-60 rounded-xl mt-3"
                     resizeMode={ResizeMode.CONTAIN}
                     useNativeControls
@@ -93,7 +130,7 @@ const VideoCard = ({ video: { $id: videoId, title, thumbnail, video, prompt, cre
                 <Text className="text-left font-pbold text-l text-gray-300">Description</Text>
                 <Text className="text-white font-pregular text-xs">{prompt}</Text>
             </View>
-            <View className="flex-row  justify-between p-3 rounded-lg mt-3">
+            <View className="flex-row justify-between p-3 rounded-lg mt-3">
                 <TouchableOpacity className="flex-1 items-start ml-3" onPress={handleBookmark}>
                     {bookmark ? 
                         <Image source={icons.heartFill}
@@ -106,7 +143,6 @@ const VideoCard = ({ video: { $id: videoId, title, thumbnail, video, prompt, cre
                         resizeMode='contain'
                     />
                     }
-                    
                 </TouchableOpacity>
                 <TouchableOpacity className="flex-1 items-end mr-3">
                     <Image source={icons.chat}
